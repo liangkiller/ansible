@@ -1,0 +1,74 @@
+---
+- name: create the repl user
+  tags:
+    - user
+  mysql_user:
+    config_file: "{{ cnf_file }}"
+    login_unix_socket: "{{ socket }}"
+    login_port: "{{ mysql_port }}"
+    login_password: "{{ root_pass }}"
+    login_user: root
+    name: "{{ repl_user_name }}"
+    password: "{{ repl_user_pass }}"
+    priv: "*.*:REPLICATION SLAVE"
+    host: "{{ hostvars[groups.mysql_agent[0]].ansible_default_ipv4.address }}"
+    state: present
+  when: reps == 'master'
+
+- name: Get master binlog file name and binlog position
+  mysql_replication:
+    config_file: "{{ cnf_file }}"
+    login_unix_socket: "{{ socket }}"
+    login_port: "{{ mysql_port }}"
+    login_password: "{{ root_pass }}"
+    login_user: root
+    mode: getmaster
+  register: repl_master_info
+  when: reps == 'master'
+
+- name: start slave in slave to start the replication
+  mysql_replication: 
+    config_file: "{{ cnf_file }}"
+    login_unix_socket: "{{ socket }}"
+    login_port: "{{ mysql_port }}"
+    login_password: "{{ root_pass }}"
+    login_user: root
+    mode: stopslave
+  when: reps == 'slave'
+
+- name: config the slave
+  mysql_replication:
+    config_file: "{{ cnf_file }}"
+    login_unix_socket: "{{ socket }}"
+    login_port: "{{ mysql_port }}"
+    login_password: "{{ root_pass }}"
+    login_user: root
+    mode: changemaster
+    master_host: "{{ hostvars[groups.mysql_master[0]].ansible_default_ipv4.address }}"
+    master_log_file: "{{ hostvars[groups.mysql_master[0]].repl_master_info.File }}"
+    master_log_pos: "{{ hostvars[groups.mysql_master[0]].repl_master_info.Position }}"
+    master_user: "{{ repl_user_name }}"
+    master_password: "{{ repl_user_pass }}"
+    master_port: "{{ mysql_port }}"
+  when: reps == 'slave'
+
+- name: slave read only
+  mysql_variables:
+    config_file: "{{ cnf_file }}"
+    login_unix_socket: "{{ socket }}"
+    login_port: "{{ mysql_port }}"
+    login_password: "{{ root_pass }}"
+    login_user: root
+    variable: read_only
+    value: 1
+  when: reps == 'slave'
+
+- name: start slave in slave to start the replication
+  mysql_replication: 
+    config_file: "{{ cnf_file }}"
+    login_unix_socket: "{{ socket }}"
+    login_port: "{{ mysql_port }}"
+    login_password: "{{ root_pass }}"
+    login_user: root
+    mode: startslave
+  when: reps == 'slave'

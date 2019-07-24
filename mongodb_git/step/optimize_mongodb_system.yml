@@ -1,0 +1,9 @@
+---
+- name: tuned percona-mongodb optimize
+  hosts: all
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - optimize_system
+  roles:
+    - optimize_system

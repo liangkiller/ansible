@@ -1,0 +1,87 @@
+---
+- name: install the pymongo
+  tags:
+    - pip
+  pip:
+    name: pymongo 
+
+- name: yum install the ntp
+  yum:
+    name: ntp
+    state: latest
+
+- name: update the time
+  shell: ntpdate ntp1.aliyun.com
+
+- name: add crontab
+  cron:
+    name: "ntpate"
+    minute: "0"
+    hour: "*/6"
+    job: "ntpdate ntp1.aliyun.com >/dev/null 2>&1"
+
+- name: uninstall the openjdk
+  yum:
+    name: java*
+    state: absent
+  tags: removejdk
+
+- name: install the openjdk specific version
+  yum:
+    name: "java-{{ jdk_version }}"
+    state: latest
+    enablerepo: epel
+  tags: installjdk
+
+- name: config tsinghua mongodb mirror
+  yum_repository:
+    name: mongodb-org
+    description: 'Mongodb china YUM repo'
+    file: mongodb
+    baseurl: 'https://mirrors.tuna.tsinghua.edu.cn/mongodb/yum/el$releasever-4.0/'
+    gpgcheck: no
+    enabled: yes
+
+- name: install the mongodb package
+  yum:
+    name: mongodb-org
+    state: latest
+    enablerepo: mongodb-org
+
+- name: create the dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  loop:
+    - "{{ configDir }}"
+    - "{{ logDir }}"
+    - "{{ pidDir }}"
+
+- name: create db dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  loop: "{{ dbDir }}"
+
+- name: generate the keyfile
+  tags:
+    - keyfile
+  delegate_to: localhost
+  shell: >
+    openssl rand -base64 756 > "{{ role_path }}/files/mongoshard.key"
+  args:
+    warn: no
+
+- name: copy the keyfile
+  tags:
+    - keyfile
+  copy:
+    src: mongoshard.key
+    dest: "{{ configDir }}/mongoshard.key"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 0600

@@ -1,0 +1,9 @@
+---
+- name: set yum repo,ntp,openjdk,Development tools and other tools
+  hosts: cdh
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - node_ini
+  roles:
+    - node_ini

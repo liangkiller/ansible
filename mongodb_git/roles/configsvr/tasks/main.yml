@@ -1,0 +1,21 @@
+---
+- name: creat the db path
+  file:
+    path: "{{ configsvr.dbPath }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    state: directory
+
+- name: copy the conf
+  template:
+    src: mongod.yml.j2
+    dest: "{{ configsvr.confPath }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    force: yes
+
+- name: copy the service
+  template:
+    src: mongod.service
+    dest: "{{ configsvr.servicePath }}"
+    force: yes

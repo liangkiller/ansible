@@ -1,0 +1,100 @@
+---
+rpms: [numactl]
+
+# mysql user
+user: mysql
+group: mysql
+root_pass: qlPLK9LIDXQk!TdI
+
+# repl user
+repl_user_name: slave
+repl_user_pass: slave127
+
+# download info
+mysql_major: MySQL-5.7
+mysql_version: 5.7.26
+download_site_url: "https://mirrors.163.com/mysql/Downloads/{{ mysql_major }}"
+mysql_rpm_urls:
+  - name: mysql_common
+    url: "{{ download_site_url }}/mysql-community-common-{{ mysql_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_machine }}.rpm"
+  - name: mysql_libs
+    url: "{{ download_site_url }}/mysql-community-libs-{{ mysql_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_machine }}.rpm"
+  - name: mysql_libs_compat
+    url: "{{ download_site_url }}/mysql-community-libs-compat-{{ mysql_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_machine }}.rpm"
+  - name: mysql_devel
+    url: "{{ download_site_url }}/mysql-community-devel-{{ mysql_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_machine }}.rpm"
+  - name: mysql_client
+    url: "{{ download_site_url }}/mysql-community-client-{{ mysql_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_machine }}.rpm"
+  - name: mysql_server
+    url:  "{{ download_site_url }}/mysql-community-server-{{ mysql_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_machine }}.rpm"
+
+
+# my.cnf
+cnf_file: /etc/my.cnf
+charset: utf8
+collation: utf8_unicode_ci
+base_dir: /usr
+dir_user: /cache1/mysql
+data_dir: "{{ dir_user }}/data"
+socket: "{{ dir_user }}/mysql.sock"
+error_log_path: "{{ dir_user }}/mysql_error.err"
+pid_path: "{{ dir_user }}/mysqld.pid"
+slow_log_dir: "{{ dir_user }}/slowlog"
+bin_log_dir: "{{ dir_user }}/binlog"
+relay_log_dir: "{{ dir_user }}/relaybinlog"
+server_id: "{{ ansible_default_ipv4.address.split('.')[2] ~ ansible_default_ipv4.address.split('.')[3]}}"
+gtid_enable: false
+innodb_buffer_pool_size: "{{ (ansible_memtotal_mb * 1024 * 1024 * 0.1)|human_to_bytes }}"
+innodb_io_capacity: 200
+innodb_log_file_size: 256M
+innodb_flush_log_at_trx_commit: 2
+innodb_temp_data_file_path: "{{ dir_user }}/tmp"
+innodb_log_group_home_dir: "{{ dir_user }}/log"
+password_policy: [validate_password_policy,validate_password_length,validate_password_mixed_case_count,validate_password_number_count,validate_password_special_char_count]
+close_password_policy: true
+#master
+sync_binlog: 0
+binlog_group_commit_sync_delay: 1000000
+binlog_group_commit_sync_no_delay_count: 20
+expire_logs_days: 5
+#slave
+slave_parallel_workers: 16
+
+#CDH db and user
+mysql_cdh:
+  - name: Cloudera Manager Server
+    db_name: "{{ cmf_db }}"
+    db_user: "{{ cmf_user }}"
+    db_pass: "{{ cmf_pass }}"
+  - name: Activity Monitor
+    db_name: amon
+    db_user: amon
+    db_pass: amon
+  - name: Reports Manager
+    db_name: rman
+    db_user: rman
+    db_pass: rman
+  - name: Cloudera Navigator Audit Server
+    db_name: nav
+    db_user: nav
+    db_pass: nav
+  - name: Cloudera Navigator Metadata Server
+    db_name: navms
+    db_user: navms
+    db_pass: navms
+  - name: Sentry Server
+    db_name: sentry
+    db_user: sentry
+    db_pass: sentry
+  - name: Hive Metastore Server
+    db_name: hive
+    db_user: hive
+    db_pass: hive
+  - name: Oozie
+    db_name: oozie
+    db_user: oozie
+    db_pass: oozie
+  - name: Hue
+    db_name: hue
+    db_user: hue
+    db_pass: hue

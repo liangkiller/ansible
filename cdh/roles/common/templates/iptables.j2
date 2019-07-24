@@ -1,0 +1,55 @@
+# {{ ansible_managed }}
+# Manual customization of this file is not recommended.
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+# default
+-A INPUT -i lo -j ACCEPT
+
+### ruan3
+{% set quotient = ports|length // 15 %}
+{% set mod = ports|length % 15 %}
+{% if mod == 0 %}
+    {%- set n = quotient %}
+{% else %}
+    {%- set n = quotient + 1 %}
+{% endif -%}
+
+{% for i in range(n) %}
+    {%- set start = i * 15 %}
+    {%- set stop = (i + 1) * 15 %}
+-A INPUT -s 59.61.78.224/28 -p tcp -m tcp -m multiport --dports {{ ports[start:stop]|join(',') }} -j ACCEPT
+-A INPUT -s 59.61.78.128/28 -p tcp -m tcp -m multiport --dports {{ ports[start:stop]|join(',') }} -j ACCEPT
+-A INPUT -s 218.85.123.224/27 -p tcp -m tcp -m multiport --dports {{ ports[start:stop]|join(',') }} -j ACCEPT
+-A INPUT -s 218.107.205.208/28 -p tcp -m tcp -m multiport --dports {{ ports[start:stop]|join(',') }} -j ACCEPT
+-A INPUT -s 183.253.10.64/27 -p tcp -m tcp -m multiport --dports {{ ports[start:stop]|join(',') }} -j ACCEPT
+-A INPUT -s 36.251.248.160/27 -p tcp -m tcp -m multiport --dports {{ ports[start:stop]|join(',') }} -j ACCEPT
+{% endfor %}
+
+#cluster
+{% for host in groups['all'] %}
+    {%- for i in range(n) %}
+        {%- set start = i * 15 %}
+        {%- set stop = (i + 1) * 15 %}
+-A INPUT -p tcp -s {{ host }} -m multiport --dports {{ ports[start:stop]|join(',') }} -j ACCEPT
+{% endfor %}
+{% endfor %}
+
+#monitor
+{% for i in range(n) %}
+    {%- set start = i * 15 %}
+    {%- set stop = (i + 1) * 15 %}
+-A INPUT -p tcp -s {{ monitor }} -m multiport --dports {{ ports[start:stop]|join(',') }} -j ACCEPT
+{% endfor %}
+
+
+# Drop all except allow
+{% for i in range(n) %}
+    {%- set start = i * 15 %}
+    {%- set stop = (i + 1) * 15 %}
+-A INPUT -p tcp -m multiport --dports {{ ports[start:stop]|join(',') }} -j DROP
+{% endfor %}
+
+COMMIT

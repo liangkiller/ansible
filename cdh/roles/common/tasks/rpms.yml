@@ -1,0 +1,10 @@
+---
+- name: yum  Development tools
+  yum: 
+    name: "@Development tools" 
+    state: present
+
+- name: other tools
+  yum:
+    name: "{{ othertools }}"
+    state: latest

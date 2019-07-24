@@ -1,0 +1,34 @@
+---
+- name: unmount filesystem
+  tags:
+    - umount
+  mount:
+    path: "{{ item.dir }}"
+    state: unmounted
+  loop: "{{ partitions_old }}"
+
+- name: unmount filesystem
+  tags:
+    - umount
+  mount:
+    path: "{{ item.dir }}"
+    state: absent
+  loop: "{{ partitions_old }}"
+
+- name: delete old partitions
+  parted:
+    device: "{{ item.device }}"
+    number: "{{ item.num }}"
+    state: absent
+  loop: "{{ partitions_old }}"
+
+- name: parted the disk
+  parted:
+    device: "{{ item.device }}"
+    label: "{{ item.label }}"
+    part_type: "{{ item.part_type }}"
+    number: "{{ item.num }}"
+    part_start: "{{ item.part_start }}"
+    part_end: "{{ item.part_end }}"
+    state: present
+  loop: "{{ partitions }}"

@@ -1,0 +1,124 @@
+---
+- name: install mongodb package and crate common dir
+  hosts: all
+  gather_facts: yes
+  any_errors_fatal: true
+  tags:
+    - common
+  roles:
+    - common
+
+- name: install the configsvr
+  hosts: configsvr
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - configsvr_install
+  roles:
+    - configsvr
+
+- name: install the shardsvr
+  hosts: shardsvr
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - shardsvr_install
+  roles:
+    - shardsvr
+
+
+- name: install the mongos
+  hosts: mongos
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - mongos_install
+  roles:
+    - mongos
+
+- name: systemd reload
+  hosts: configsvr
+  gather_facts: no
+  tags:
+    - service_reload
+  tasks:
+    - name: just force systemd to reload configs
+      systemd:
+        daemon_reload: yes
+
+- name: start all configsvr
+  hosts: all
+  tags:
+    - configsvr
+  gather_facts: no
+  tasks :
+    - name: start the config service
+      service:
+        name: "{{ configsvr.name }}"
+        state: started
+
+- name: start all shardsvr
+  hosts: shardsvr
+  tags:
+    - shardsvr
+  gather_facts: no
+  vars:
+    shardItem: "{{ item }}"
+  tasks:
+    - name: start the shard service
+      service:
+        name: "{{ item.name }}"
+        state: started
+      loop: "{{ shardinfo }}"
+
+- name:  the configsvr and shardsvr initializtion
+  hosts: master
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - iniMongod
+  roles:
+    - iniMongod
+
+- name: start all mongos
+  hosts: mongos
+  tags:
+    - mongos
+  gather_facts: no
+  tasks:
+    - name: start the mongos service
+      service:
+        name: "{{ mongos.name }}"
+        state: started
+
+- name:  the mongos initializtion
+  hosts: master
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - iniMongos
+  roles:
+    - iniMongos
+
+- name: add the root user and enable user auth
+  hosts: all
+  gather_facts: no
+  tags:
+    - createUser
+  roles:
+    - createUser
+  ignore_errors: yes
+
+- name: Enable conf auth
+  hosts: all
+  gather_facts: no
+  tags:
+    - enableauth
+  roles:
+    - enableauth
+
+- name: Include stop play 
+  import_playbook: stop.yml
+
+- name: Include stop play 
+  import_playbook: start.yml

@@ -1,0 +1,8 @@
+---
+- name: Collect memory facts 
+  setup:
+    gather_subset:
+      - hardware
+
+- debug:
+    msg: "{{ (ansible_memtotal_mb * 1024 * 1024 * 0.1)|human_to_bytes }}"

@@ -1,0 +1,43 @@
+---
+- name: set the mirror, need long time
+  shell: npm install -g cnpm --registry=https://registry.npm.taobao.org
+  when: npm_mirror_enable
+
+- name: create the dir
+  file:
+    path: "{{ web_dir }}"
+    state: directory
+
+- name: intall the pm2
+  tags:
+    - pm2
+  npm:
+    name: pm2
+    path: "{{ web_dir }}"
+
+
+- name: intall the mongo-express
+  tags:
+    - mongo-express
+  npm:
+    name: mongo-express
+    path: "{{ web_dir }}"
+
+- name: set the config
+  template:
+    src: config.js.j2
+    dest: "{{ web_dir }}/node_modules/mongo-express/config.js"
+    force: yes
+
+- name: set the read only
+  tags:
+    - replace
+  replace:
+    path: "{{ web_dir }}/node_modules/mongo-express/lib/middleware.js"
+    regexp: 'config.options.readOnly \|\| false'
+    replace: 'config.options.readOnly || true'
+
+- name: start the mongo-express
+  shell: pm2 start app.js --name mongo-express
+  args:
+    chdir: "{{ web_dir }}/node_modules/mongo-express"

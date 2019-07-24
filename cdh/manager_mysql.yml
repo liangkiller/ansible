@@ -1,0 +1,30 @@
+---
+- name: start mysql service
+  hosts: mysql
+  tags:
+    - start
+  tasks:
+    - name: start mysql service
+      service:
+        name: "{{ mysql_service_name }}"
+        state: started
+
+- name: stop all mysql service
+  hosts: mysql
+  tags:
+    - stop
+  tasks:
+    - name: stop mysql service
+      service:
+        name: "{{ mysql_service_name }}"
+        state: stopped
+
+- name: restart all mysql service
+  hosts: mysql
+  tags:
+    - restart
+  tasks:
+    - name: restart mysql service
+      service:
+        name: "{{ mysql_service_name }}"
+        state: restarted

@@ -1,0 +1,50 @@
+---
+- name: setting present kernel params
+  sysctl: 
+    name: "{{ item.name }}" 
+    value: "{{ item.value }}" 
+    ignoreerrors: yes 
+    state: present
+    reload: yes
+  with_items:
+    - { name: 'vm.max_map_count', value: 262144 }
+    - { name: 'vm.swappiness', value: 1 }
+    - { name: 'net.ipv4.tcp_syncookies', value: 0 }
+    - { name: 'fs.file-max', value: 1000000 }
+
+- name: set the hugepage
+  shell: |
+    echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+    echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+
+- name: set the rc.local
+  blockinfile:
+    path: /etc/rc.local
+    marker: "# {mark} redhat_transparent_hugepage"
+    block: |
+      echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+      echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+
+- name: set ulimit
+  tags:
+    - ulimit
+  copy:
+    src: 90-cdhagent.conf
+    dest: /etc/security/limits.d/90-cdhagent.conf
+
+- name: set the entropy
+  yum:
+    name: haveged 
+    state: present
+
+- name: set the haveged conf
+  lineinfile:
+    path: /etc/default/haveged 
+    line: DAEMON_ARGS="-w 1024"
+    create: yes
+
+- name: start the haveged
+  service:
+    name: haveged 
+    state: started 
+    enabled: yes

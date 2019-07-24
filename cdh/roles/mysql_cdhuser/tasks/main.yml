@@ -1,0 +1,27 @@
+---
+- name: Create CDH database  
+  mysql_db:
+    config_file: "{{ cnf_file }}"
+    login_unix_socket: "{{ socket }}"
+    login_port: "{{ mysql_port }}"
+    login_password: "{{ root_pass }}"
+    login_user: root
+    name: "{{ item.db_name }}"
+    encoding: utf8
+    collation: utf8_general_ci
+    state: present
+  loop: "{{ mysql_cdh }}"
+
+- name: Create CDH user 
+  mysql_user:
+    config_file: "{{ cnf_file }}"
+    login_unix_socket: "{{ socket }}"
+    login_port: "{{ mysql_port }}"
+    login_password: "{{ root_pass }}"
+    login_user: root
+    name: "{{ item.db_user }}"
+    password: "{{ item.db_pass }}"
+    priv: '{{ item.db_name }}.*:ALL'
+    host: '%'
+    state: present
+  loop: "{{ mysql_cdh }}"

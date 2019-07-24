@@ -1,0 +1,17 @@
+---
+- name: yum install the epel repo
+  yum:
+    name: epel-release
+    state: latest
+
+- include_tasks: "{{ mirror }}.yml"
+
+- name: yum-clean-metadata
+  command: yum clean metadata 
+  args:
+    warn: no
+ 
+- name: yum makecache
+  command:  yum makecache
+  args:
+    warn: no

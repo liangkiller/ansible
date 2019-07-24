@@ -1,0 +1,8 @@
+---
+mongos:
+  name: mongos
+  confPath: "{{ configDir}}/mongos.yml"
+  logPath: "{{ logDir }}/mongos.log"
+  pidFilePath: "{{ pidDir }}/mongos.pid"
+  port: 17088
+  servicePath: "{{ serviceDir }}/mongos.service"

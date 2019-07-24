@@ -1,0 +1,19 @@
+---
+- name: remove the cdh
+  hosts: cdh
+  gather_facts: yes
+  any_errors_fatal: false
+  tags:
+    - remove_cdh
+  roles:
+    - remove_cdh
+
+- name: remove the mysql
+  hosts: mysql
+  gather_facts: yes
+  any_errors_fatal: false
+  tags:
+    - remove_mysql
+  roles:
+    - remove_mysql
+

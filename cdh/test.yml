@@ -1,0 +1,9 @@
+---
+- name: test
+  hosts: all
+  gather_facts: no
+  any_errors_fatal: no
+  tags:
+    - test
+  roles:
+    - test

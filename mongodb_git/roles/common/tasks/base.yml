@@ -1,0 +1,42 @@
+---
+- name: set the hostname
+  tags:
+    - host
+  hostname:
+    name: "{{ hostname }}"
+  when:  hostname is defined
+
+- name: config the hosts
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+
+- name: template the  iptables
+  delegate_to: localhost
+  tags:
+    - iptables
+    - iptables_template
+  template:
+    src: iptables.j2
+    dest: "{{ role_path }}/files/iptables.txt"
+    force: yes
+
+- name: copy the default iptables
+  tags:
+    - iptables
+  copy:
+    src: iptables.txt
+    dest: /etc/sysconfig/iptables
+
+- name: reload the iptables service
+  tags:
+    - iptables
+  service:
+    name: iptables
+    state: reloaded
+
+- name: generate root ssh key
+  shell: |
+    ssh-keygen -t rsa -N '' -f '/root/.ssh/id_rsa' -C "root@`hostname`"
+  args:
+    creates: /root/.ssh/id_rsa

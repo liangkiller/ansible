@@ -1,0 +1,35 @@
+---
+- name: unmount filesystem
+  tags:
+    - umount
+  mount:
+    path: "{{ item.dir }}"
+    state: unmounted
+  loop: "{{ fs_old }}"
+  when: fs_old is defined
+
+- name: absent filesystem
+  tags:
+    - umount
+  mount:
+    path: "{{ item.dir }}"
+    state: absent
+  loop: "{{ fs_old }}"
+  when: fs_old is defined
+
+- name: Create a  filesystem
+  filesystem:
+    fstype: "{{ item.fstype }}"
+    dev: "{{ item.name }}"
+    opts: "{{ item.opts }}"
+    force: yes
+  loop: "{{ dev }}"
+
+- name: mount filesystem
+  mount:
+    path: "{{ item.dir }}"
+    src: "{{ item.label }}"
+    fstype: "{{ item.fstype }}"
+    opts: defaults,noatime,nodiratime
+    state: mounted
+  loop: "{{ dev }}"

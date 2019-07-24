@@ -1,0 +1,37 @@
+---
+#- name: show the vars
+#  vars:
+#    shardItem: "{{ item }}"
+#  debug:
+#    msg: "{{ shardItem }}"
+#  loop: "{{ shard }}"
+
+- name: creat the shard db dir
+  vars:
+    shardItem: "{{ item }}"
+  file:
+    path: "{{ shardItem.dbPath }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    state: directory
+  loop: "{{ shardinfo }}"
+
+- name: copy the conf
+  vars:
+    shardItem: "{{ item }}"
+  template:
+    src: mongod.yml.j2
+    dest: "{{ shardItem.confPath }}"
+    force: yes
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  loop: "{{ shardinfo }}"
+
+- name: copy the service
+  vars:
+    shardItem: "{{ item }}"
+  template:
+    src: mongod.service
+    dest: "{{ shardItem.servicePath }}"
+    force: yes
+  loop: "{{ shardinfo }}"

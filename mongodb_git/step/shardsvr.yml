@@ -1,0 +1,9 @@
+---
+- name: install the shardsvr
+  hosts: shardsvr
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - shardsvr
+  roles:
+    - shardsvr

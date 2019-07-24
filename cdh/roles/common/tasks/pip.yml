@@ -1,0 +1,24 @@
+---
+- name: create the pip dir
+  tags:
+    - pip
+  file:
+    path: $HOME/.pip/
+    state: directory
+
+- name: copy the pip.conf
+  tags:
+    - pip
+  copy:
+    src: pip.conf
+    dest: $HOME/.pip/pip.conf
+
+#- name: upgrade pip
+#  tags:
+#    - pip
+#  shell: pip install --upgrade pip
+
+- name: update openssl
+  yum:
+    name: openssl
+    state: latest

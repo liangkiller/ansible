@@ -1,0 +1,9 @@
+#!/bin/bash
+# create mongodb root user
+# configsvr
+mongo --host localhost --port {{ configsvr.port }} --eval "db.createUser({user: '{{ mongo_root_user }}',pwd: '{{ mongo_root_pass }}',roles: [{ role: 'root', db: 'admin' },{ role: 'userAdminAnyDatabase', db: 'admin' }]})"  >>/tmp/createuser.log 2>&1
+
+#shardsvr
+{% for shardItem in shardinfo -%}
+mongo --host localhost --port {{ shardItem.port }} --eval "db.createUser({user: '{{ mongo_root_user }}',pwd: '{{ mongo_root_pass }}',roles: [{ role: 'root', db: 'admin' },{ role: 'userAdminAnyDatabase', db: 'admin' }]})"  >>/tmp/createuser.log 2>&1
+{% endfor %}

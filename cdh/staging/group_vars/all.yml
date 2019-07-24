@@ -1,0 +1,88 @@
+---
+# parted 角色,分区
+partitions_old:
+  - name: /dev/vdb1
+    dir: /cache1
+    label: LABEL=/cache1
+    fstype: ext4
+    device: /dev/vdb
+    num: 1
+
+partitions:
+  - device: /dev/vdb
+    num: 1
+    label: gpt
+    part_type: primary
+    part_start: 0%
+    part_end: 30%
+
+  - device: /dev/vdb
+    num: 2
+    label: gpt
+    part_type: primary
+    part_start: 30%
+    part_end: 60%
+
+  - device: /dev/vdb
+    num: 3
+    label: gpt
+    part_type: primary
+    part_start: 60%
+    part_end: 100%
+
+# mkfs 角色, 格式化系统
+fs_old:
+  - name: /dev/vdb1
+    dir: /cache1
+
+  - name: /dev/vdb2
+    dir: /cache2
+
+dev:
+  - name: /dev/vdb1
+    dir: /cache1
+    label: LABEL=/cache1
+    fstype: ext4
+    opts: -L /cache1
+
+  - name: /dev/vdb2
+    dir: /cache2
+    label: LABEL=/cache2
+    fstype: ext4
+    opts: -L /cache2
+
+  - name: /dev/vdb3
+    dir: /cache3
+    label: LABEL=/cache3
+    fstype: ext4
+    opts: -L /cache3
+
+# tuned 使用
+rootDisk: vda
+
+# common使用
+# iptable 使用
+# 所有端口
+ports: [80,873,4040,7070,7072,7180,7182,7183,8042,8050,8051,8081,8084,8084,8085,8086,8088,8091,8888,8889,8983,9000,9001,9095,9864,9868,9870,10002,11000,12321,14000,18088,19888,20550,25000,25010,25020,50070,50075,50075,50079,50090,60010,60030,63751,64689]
+
+# monitor ip
+monitor: 222.187.240.238
+
+# new_node使用
+# othertools
+othertools: [screen,telnet,parted,bind-utils,libselinux-python,python-pip,nodejs,rsync]
+jdk_url: 'http://222.187.240.238/soft/java/jdk-8u162-linux-x64.rpm'
+jdbc_url: 'http://222.187.240.238/soft/mysql/mysql-connector-java-5.1.46-bin.jar'
+ntp_server: ntp1.aliyun.com
+
+# mirror
+mirror: 'aliyun'
+
+# mysql
+mysql_service_name: mysqld
+mysql_port: 63751
+#Cloudera Manager Server
+cmf_db: cmf
+cmf_user: cmf
+cmf_pass: cmf
+download_dir: /var/tmp

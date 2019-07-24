@@ -1,0 +1,6 @@
+---
+{% set configdb = [] %}
+{% for host in groups['configsvr'] -%}
+    {{ configdb.append( host ~ ":" ~ configsvr.port ) }}
+{%- endfor %}
+configDB: {{ configsvr.replSetName }}/{{ configdb|join(',') }}

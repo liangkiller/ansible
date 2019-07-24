@@ -1,0 +1,40 @@
+---
+- name: include the ntp tasks
+  tags: always
+  include_tasks:
+    file: ntp.yml
+    apply:
+      tags:
+        - ntp
+
+- name: include the java tasks
+  tags: always
+  include_tasks:
+    file: java_jdk.yml
+    apply:
+      tags:
+        - java
+
+- name: optimize the system
+  tags: always
+  include_tasks:
+    file: optimize_system.yml
+    apply:
+      tags:
+        - optimization
+
+- name: get the master pub authorized_keys
+  tags: sshkey
+  fetch:
+    src: /root/.ssh/id_rsa.pub
+    dest: "{{ role_path }}/files/authorized_keys"
+    flat: yes
+  when: role == 'master'
+
+- name: copy the authorized_keys
+  tags: sshkey
+  copy:
+    src: authorized_keys
+    dest: /root/.ssh/authorized_keys
+    mode: 0600
+

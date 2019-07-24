@@ -1,0 +1,33 @@
+---
+- hosts : mongos
+  tags:
+    - mongos
+  gather_facts: no
+  tasks :
+    - name: stopped the mongos service
+      service:
+        name: "{{ mongos.name }}"
+        state: stopped
+  
+- hosts : configsvr
+  tags:
+    - configsvr
+  gather_facts: no
+  tasks :
+    - name: stopped the config service
+      service:
+        name: "{{ configsvr.name }}"
+        state: stopped
+
+- hosts : shardsvr
+  tags:
+    - shardsvr
+  gather_facts: no
+  vars:
+    shardItem: "{{ item }}"
+  tasks :
+    - name: stopped the shard service
+      service:
+        name: "{{ item.name }}"
+        state: stopped
+      loop: "{{ shardinfo }}"

@@ -1,0 +1,33 @@
+---
+- name: include the base tasks
+  tags: always
+  include_tasks:
+    file: base.yml
+    apply:
+      tags:
+        - base
+
+- name: include the epel tasks
+  tags: always
+  include_tasks:
+    file: epel.yml
+    apply:
+      tags:
+        - epel
+
+- name: include the rpms tasks
+  tags: always
+  include_tasks:
+    file: rpms.yml
+    apply:
+      tags:
+        - rpms
+
+- name: include the rpms tasks
+  tags: always
+  include_tasks:
+    file: pip.yml
+    apply:
+      tags:
+        - pip
+

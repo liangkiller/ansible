@@ -1,0 +1,30 @@
+systemLog:
+  destination: file
+  logAppend: true
+  logRotate: reopen
+  path: {{ shardItem.logPath }}
+storage:
+  dbPath: {{ shardItem.dbPath }}
+  directoryPerDB: true
+  journal:
+    enabled: true
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: {{ shardItem.cacheSizeGB }}
+      directoryForIndexes: true
+    collectionConfig:
+      blockCompressor: {{ compressor }}
+processManagement:
+  fork: true
+  pidFilePath: {{ shardItem.pidFilePath }}
+  timeZoneInfo: /usr/share/zoneinfo
+net:
+  port: {{ shardItem.port }}
+  bindIp: localhost
+  bindIpAll: true
+  compression:
+    compressors: {{ compressor }}
+sharding:
+  clusterRole: {{ shardsvr.clusterRole }}
+replication:
+  replSetName: {{ shardItem.replSetName }}

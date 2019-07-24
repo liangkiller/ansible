@@ -1,0 +1,68 @@
+---
+
+- name: 检测是否已安装elasticsearch
+  shell: ls {{ exec }} 2>/dev/null >/dev/null; echo $?
+  changed_when: false
+  register: el_check
+
+- name: 设置install_el变量
+  set_fact: install_el={{ el_check.stdout.strip() == '0' }} 
+
+#- name: 已安装elasticsearch,退出
+#  fail: 
+#    msg: "elasticsearch 已经安装过了"
+#  when: install_el
+
+- name: 检测JAVA
+  shell: java -version 2>/dev/null >/dev/null; echo $?
+  changed_when: false
+  register: java_check
+
+- name: JAVA是否存在
+  fail: 
+    msg: "需要安装java"
+  when: {{ java_check.stdout.strip() != '0' }}
+
+- name: 获得JAVA_HOME
+  shell: echo $JAVA_HOME
+  changed_when: false
+  register: java_home
+
+- name: 设置JAVA_HOME
+  set_fact: JAVA_HOME={{ java_home.stdout }}
+  when: {{ java_home.stdout | length > 1 }}
+
+- name: 新增 elasticsearch 用户
+  user: name={{ user }} shell=/bin/nologin create_home=no group={{ group }}
+
+- name: 新增 elasticsearch 组
+  group: name={{ group }}
+
+- name: 创建目录
+  file: path={{ PID_DIR }} state=directory owner={{ user}} group={{ group }}
+
+- name: 下载elasticsearch rpm包
+  get_url:
+    url: "{{ downloadurl }}/elasticsearch-{{ version }}.rpm"
+    dest: "{{ tmpdir }}/elasticsearch-{{ version }}.rpm"
+    force: yes
+  register: get_url_result
+  until: "'OK' in get_url_result.msg or 'file already exists' in get_url_result.msg"
+  retries: 3
+  delay: 5
+  when: not install_el
+
+- name: 安装 elasticsearch 包
+  yum: 
+    name: "{{ tmpdir }}/elasticsearch-{{ version }}.rpm"
+    state: present
+  when: not install_el
+
+
+- name: 配置环境变量文件
+  template: 
+    src: env.j2
+    dest: /etc/sysconfig/elasticsearch
+    backup: yes
+
+- name: 配置el文件

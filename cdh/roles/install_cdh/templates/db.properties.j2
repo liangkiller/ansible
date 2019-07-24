@@ -1,0 +1,7 @@
+# Cloudera Manager Server
+com.cloudera.cmf.db.type=mysql
+com.cloudera.cmf.db.host={{ hostvars[groups.mysql_master[0]].ansible_default_ipv4.address }}:{{ mysql_port }}
+com.cloudera.cmf.db.name={{ cmf_db }}
+com.cloudera.cmf.db.user={{ cmf_user }}
+com.cloudera.cmf.db.password={{ cmf_pass }}
+com.cloudera.cmf.db.setupType=EXTERNAL

@@ -1,0 +1,12 @@
+---
+configsvr:
+  name: configsvr
+  clusterRole: configsvr
+  confPath: "{{ configDir}}/configsvr.yml"
+  logPath: "{{ logDir }}/configsvr.log"
+  dbPath: /cache1/mongodb/configsvr
+  pidFilePath: "{{ pidDir }}/configsvr.pid"
+  replSetName: confset
+  cacheSizeGB: 8
+  port: 17089
+  servicePath: "{{ serviceDir }}/configsvr.service"

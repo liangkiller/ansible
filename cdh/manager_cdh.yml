@@ -1,0 +1,108 @@
+---
+- name: start cdh service
+  hosts: cdh
+  tags:
+    - start
+  tasks:
+    - name: start master service
+      service:
+        name: cloudera-scm-server
+        state: started
+      when: role == 'master'
+    - name: start the agent server
+      service:
+        name: cloudera-scm-agent
+        state: started
+      when: role == 'agent'
+
+- name: stop cdh service
+  hosts: cdh
+  tags:
+    - stop
+  tasks:
+    - name: stop master service
+      service:
+        name: cloudera-scm-server
+        state: stopped
+      when: role == 'master'
+    - name: stop the agent server
+      service:
+        name: cloudera-scm-agent
+        state: stopped
+      when: role == 'agent'
+
+- name: restart cdh service
+  hosts: cdh
+  tags:
+    - restart
+  tasks:
+    - name: restart master service
+      service:
+        name: cloudera-scm-server
+        state: restarted
+      when: role == 'master'
+    - name: restart the agent server
+      service:
+        name: cloudera-scm-agent
+        state: restarted
+      when: role == 'agent'
+
+- name: start master service
+  hosts: cdh_master
+  tags:
+    - startmaster
+  tasks:
+    - name: start master service
+      service:
+        name: cloudera-scm-server
+        state: started
+
+- name: stop master service
+  hosts: cdh_master
+  tags:
+    - stopmaster
+  tasks:
+    - name: stop master service
+      service:
+        name: cloudera-scm-server
+        state: stopped
+
+- name: restart master service
+  hosts: cdh_master
+  tags:
+    - restartmaster
+  tasks:
+    - name: restart master service
+      service:
+        name: cloudera-scm-server
+        state: restarted
+
+- name: start agent service
+  hosts: cdh_agent
+  tags:
+    - startagent
+  tasks:
+    - name: start agent service
+      service:
+        name: cloudera-scm-agent
+        state: started
+
+- name: stop agent service
+  hosts: cdh_agent
+  tags:
+    - stopagent
+  tasks:
+    - name: stop agent service
+      service:
+        name: cloudera-scm-agent
+        state: stopped
+
+- name: restart agent service
+  hosts: cdh_agent
+  tags:
+    - restartagent
+  tasks:
+    - name: restart agent service
+      service:
+        name: cloudera-scm-agent
+        state: restarted     

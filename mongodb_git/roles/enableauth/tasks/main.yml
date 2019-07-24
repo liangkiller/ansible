@@ -1,0 +1,24 @@
+---
+- name: enable the configsvr user auth
+  blockinfile:
+    path: "{{ configsvr.confPath }}"
+    block: |
+      security:
+        authorization: enabled
+        keyFile: "{{ configDir }}/mongoshard.key"
+
+- name: enable the shard user auth
+  blockinfile:
+    path: "{{ item.confPath }}"
+    block: |
+      security:
+        authorization: enabled
+        keyFile: "{{ configDir }}/mongoshard.key"
+  loop: "{{ shardinfo }}"
+
+- name: enable the mongos key auth
+  blockinfile:
+    path: "{{ mongos.confPath }}"
+    block: |
+      security:
+        keyFile: {{ configDir }}/mongoshard.key

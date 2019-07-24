@@ -1,0 +1,9 @@
+---
+- name: install the mysql
+  hosts: mysql
+  gather_facts: yes
+  any_errors_fatal: true
+  tags:
+    - mysql_rep
+  roles:
+    - mysql_rep

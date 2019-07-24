@@ -1,0 +1,95 @@
+---
+# parted 角色,分区
+dev_old:
+  - name: /dev/vdb1
+    dir: /cache1
+    label: LABEL=/cache1
+    fstype: ext4
+    device: /dev/vdb
+    num: 1
+
+partitions:
+  - num: 1
+    device: /dev/vdb
+    label: gpt
+    part_type: primary
+    part_start: 0%
+    part_end: 30%
+
+  - num: 2
+    device: /dev/vdb
+    label: gpt
+    part_type: primary
+    part_start: 30%
+    part_end: 60%
+
+  - num: 3
+    device: /dev/vdb
+    label: gpt
+    part_type: primary
+    part_start: 60%
+    part_end: 100%
+
+# mkfs 角色, 格式化系统
+dev:
+  - name: /dev/vdb1
+    dir: /cache1
+    label: LABEL=/cache1
+    fstype: xfs
+    opts: -d agcount={{ ansible_processor|length//3 }} -L /cache1
+
+  - name: /dev/vdb2
+    dir: /cache2
+    label: LABEL=/cache2
+    fstype: xfs
+    opts: -d agcount={{ ansible_processor|length//3 }} -L /cache2
+
+  - name: /dev/vdb3
+    dir: /cache3
+    label: LABEL=/cache3
+    fstype: xfs
+    opts: -d agcount={{ ansible_processor|length//3 }} -L /cache3
+
+# common 
+othertools: [screen,telnet,parted,bind-utils,libselinux-python,python-pip,nodejs,rsync]
+jdk_url: 'http://222.187.240.238/soft/java/jdk-8u162-linux-x64.rpm'
+jdbc_url: 'http://222.187.240.238/soft/mysql/mysql-connector-java-5.1.46-bin.jar'
+mirror: 'aliyun'
+
+# iniSys 角色
+jdk_version: 1.8.0
+
+# mongodb 
+compressor: zlib
+serviceDir: /etc/systemd/system
+configDir: /etc/mongodb
+logDir: /var/log/mongodb
+pidDir: /var/run/mongodb
+user: mongod
+group: mongod
+dbDir:
+  - /cache1/mongodb
+  - /cache2/mongodb
+  - /cache3/mongodb
+
+# mongo root用户
+mongo_root_user: admin
+mongo_root_pass: admin
+# 普通用户
+mongo_db_user:
+  - db_name: dw
+    db_user: chenzl
+    db_pass: chenzl
+
+
+# monitor ip
+monitor: 222.187.240.238
+# other ip
+other_ip: ['222.187.240.229']
+
+# mongodb web view
+npm_mirror_enable: no
+web_dir: /usr/local/nodejs
+web_port: 18081
+web_login_user: chenzl
+web_login_pass: Qj6eDc1G

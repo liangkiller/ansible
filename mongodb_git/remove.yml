@@ -1,0 +1,11 @@
+---
+- name: Include stop play 
+  import_playbook: stop.yml
+
+- name: remove mongodb
+  hosts: all
+  gather_facts: no
+  tags:
+    - remove
+  roles:
+    - remove

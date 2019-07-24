@@ -1,0 +1,43 @@
+---
+- name: remove the conf dir
+  file:
+    path: "{{ configDir }}"
+    state: absent
+
+- name: remove the log dir
+  file:
+    path: "{{ logDir }}"
+    state: absent
+
+- name: remove the pid dir
+  file:
+    path: "{{ pidDir }}"
+    state: absent
+
+- name: remove the db dir
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ dbDir }}"
+
+- name: remove the mongos service file
+  file:
+    path: "{{ mongos.servicePath }}"
+    state: absent
+
+- name: remove the config service file
+  file:
+    path: "{{ configsvr.servicePath }}"
+    state: absent
+
+- name: remove the shard service file
+  file:
+    path: "{{ item.servicePath }}"
+    state: absent
+  loop: "{{ shardinfo }}"
+
+- name: remove the mongodb package
+  yum:
+    name: mongodb-org
+    state: absent
+

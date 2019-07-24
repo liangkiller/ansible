@@ -1,0 +1,8 @@
+---
+- name: install the mongo-express
+  hosts: web_tool
+  gather_facts: no
+  tags:
+    - web
+  roles:
+    - mongotools  

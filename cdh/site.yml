@@ -1,0 +1,53 @@
+---
+- name: install common package
+  hosts: all
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - common
+  roles:
+    - common
+
+- name: set yum repo,ntp,openjdk,Development tools and other tools
+  hosts: cdh
+  gather_facts: no
+  any_errors_fatal: no
+  tags:
+    - node_ini
+  roles:
+    - node_ini
+
+- name: install the mysql
+  hosts: mysql
+  gather_facts: yes
+  tags:
+    - install_mysql
+  roles:
+    - install_mysql
+
+- name: set the mysql replication
+  hosts: mysql
+  gather_facts: yes
+  any_errors_fatal: no
+  tags:
+    - mysql_rep
+  roles:
+    - mysql_rep
+
+- name: create the chd user
+  hosts: mysql_master
+  gather_facts: no
+  any_errors_fatal: no
+  tags:
+    - mysql_cdhuser
+  roles:
+    - mysql_cdhuser
+
+- name: install the cdh
+  hosts: cdh
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - install_cdh
+  roles:
+    - install_cdh

@@ -1,0 +1,18 @@
+---
+- name: set the iptables
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: add the iptables
+      blockinfile:
+        path: /etc/sysconfig/iptables
+        marker: "# {mark} web "
+        insertbefore: "#monitor"
+        block: |
+            -A INPUT -s 222.187.240.234 -p tcp -m tcp -m multiport --dports 17088 -j ACCEPT
+        state: present
+
+    - name: reload the iptabls
+      service:
+        name: iptables
+        state: reloaded

@@ -1,0 +1,70 @@
+---
+#- name: template the  createUser scripts
+#  tags:
+#    - createuser
+#    - cu_script
+#  delegate_to: localhost
+#  template:
+#    src: creatuser.yml.j2 
+#    dest: "{{ role_path }}/files/creatuser.sh"
+#    force: yes
+
+#- name: sleep for 30 seconds and continue with play
+#  wait_for:
+#    timeout: 30
+#  delegate_to: localhost
+
+#- name: run the the configsvr createUser bash
+#  tags:
+#    - createuser
+#  script: files/creatuser.sh
+
+- name: sleep  15 seconds for select the master and continue with play
+  wait_for:
+    timeout: 15
+  delegate_to: localhost
+
+- name: create  configsvr root and userAdminAnyDatabase user
+  mongodb_user:
+    database: admin
+    name: "{{ mongo_root_user }}"
+    password: "{{ mongo_root_pass }}"
+    replica_set: "{{ configsvr.replSetName }}"
+    login_port: "{{ configsvr.port }}"
+    roles:
+      - db: admin
+        role: root
+      - db: admin
+        role: userAdminAnyDatabase
+    state: present
+
+- name: create  shard root and userAdminAnyDatabase user
+  mongodb_user:
+    database: admin
+    name: "{{ mongo_root_user }}"
+    password: "{{ mongo_root_pass }}"
+    replica_set: "{{ item.replSetName }}"
+    login_port: "{{ item.port }}"
+    roles:
+      - db: admin
+        role: root
+      - db: admin
+        role: userAdminAnyDatabase
+    state: present
+  loop: "{{ shardinfo }}"
+
+- name: create readWrite user
+  tags:
+    - user
+  mongodb_user:
+    login_user: "{{ mongo_root_user }}"
+    login_password: "{{ mongo_root_pass }}"
+    database: "{{ item.db_name }}"
+    name: "{{ item.db_user }}"
+    password: "{{ item.db_pass }}"
+    login_port: "{{ mongos.port }}"
+    roles:
+      - db: "{{ item.db_name }}"
+        role: readWrite
+    state: present
+  loop: "{{ mongo_db_user }}"

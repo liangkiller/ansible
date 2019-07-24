@@ -1,0 +1,29 @@
+---
+- name: template the configsvr initialize scripts
+  tags:
+    - configsvr_ini
+  delegate_to: localhost
+  template:
+    src: configsvr_ini.yml.j2 
+    dest: "{{ role_path }}/files/configsvr_ini.sh"
+    force: yes
+
+- name: run the the configsvr initialize sh
+  tags:
+    - configsvr_ini
+  script: files/configsvr_ini.sh
+
+- name: template the shard initialize scripts
+  tags:
+    - shardsvr_script
+    - shardsvr_ini
+  delegate_to: localhost
+  template:
+    src: shard_ini.yml.j2 
+    dest: "{{ role_path }}/files/shardsvr_ini.sh"
+    force: yes
+
+- name: run the the shard initialize sh
+  tags:
+    - shardsvr_ini
+  script: files/shardsvr_ini.sh

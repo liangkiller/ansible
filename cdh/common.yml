@@ -1,0 +1,10 @@
+---
+- name: install common package
+  hosts: all
+  gather_facts: yes
+  any_errors_fatal: true
+  tags:
+    - common
+  roles:
+#   - selinux
+    - common

@@ -1,0 +1,39 @@
+---
+# el版本
+version: 6.5.4
+# 下载链接
+downloadurl: "http://222.187.240.238/soft/elk/"
+
+#centos系统版本
+LSB: "{{ ansible_distribution_major_version }}"
+
+# 临时目录
+tmpdir: /var/tmp
+
+# ip值列表
+ip_list: "{{ansible_default_ipv4.address.split('.')}}"
+
+
+# elasticsearch环境变量配置
+# RPM安装目录
+ES_HOME: "/usr/share/elasticsearch"
+# 最大文件描述符数
+MAX_OPEN_FILES: 65536
+MAX_MAP_COUNT: 262144
+# 配置文件目录
+ES_PATH_CONF: "/etc/elasticsearch"
+# PID目录
+PID_DIR: "/var/run/elasticsearch"
+# EL环境变量文件
+ES_ENV_FILE: "/etc/sysconfig/elasticsearch"
+exec: "{{ ES_HOME }}/bin/elasticsearch"
+prog: "elasticsearch"
+pidfile: "{{ PID_DIR }}/{{ prog }}.pid"
+lockfile: /var/lock/subsys/{{ prog }}
+
+user: elasticsearch
+group: elasticsearch
+
+JAVA_HOME: /usr/java/jdk1.8.0_162
+
+# el配置

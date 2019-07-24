@@ -1,0 +1,124 @@
+---
+- name: stop the master server
+  service:
+    name: cloudera-scm-server
+    state: stopped
+  when: role == 'master'
+  ignore_errors: yes
+
+- name: stopt the agent server
+  service:
+    name: cloudera-scm-agent
+    state: stopped
+  when: role == 'agent'
+  ignore_errors: yes
+
+- name: remove the master rpms
+  tags:
+    - install
+  yum:
+    name: "{{item.name}}"
+    state: absent
+  loop: "{{ cdh_master }}"
+  when: role == 'master'
+
+- name: remove the agent rpms
+  tags:
+    - install
+  yum:
+    name: "{{item.name}}"
+    state: absent
+  loop: "{{ cdh_agent }}"
+  when: role == 'agent'
+
+- name: umount cm_processes
+  mount:
+    path: /var/run/cloudera-scm-agent/process
+    state: unmounted
+
+- name: delete cloudera dir
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /usr/share/cmf
+    - /var/lib/cloudera-scm-agent
+    - /var/lib/cloudera-scm-server
+    - /var/log/cloudera-scm-agent
+    - /var/log/cloudera-scm-server
+    - /var/run/cloudera-scm-agent
+    - /var/run/cloudera-scm-server
+    - /var/lib/cloudera-scm-server-db
+    - /var/lib/cloudera-host-monitor
+    - /var/lib/cloudera-service-monitor
+    - /var/lib/navigator
+    - /var/lib/solr
+    - /var/lib/zookeeper
+    - /var/lib/flume-ng
+    - /var/lib/hadoop*
+    - /var/lib/hue
+    - /var/lib/oozie
+    - /var/lib/sqoop*
+    - /var/lib/impala*
+    - /var/lib/hbase*
+    - /var/lib/hive*
+    - /var/lib/kudu*
+    - /var/lib/sentry*
+    - /var/lib/spark*
+    - /var/lib/hadoop-yarn*
+    - /var/lib/pgsql*
+    - /usr/lib/hadoop
+    - /usr/lib/hadoop*
+    - /usr/lib/hive
+    - /usr/lib/hbase
+    - /usr/lib/oozie
+    - /usr/lib/sqoop*
+    - /usr/lib/zookeeper
+    - /usr/lib/bigtop*
+    - /usr/lib/flume-ng
+    - /usr/lib/hcatalog
+    - /usr/lib/hue
+    - /etc/hadoop*
+    - /etc/zookeeper*
+    - /etc/hive*
+    - /etc/hue
+    - /etc/impala
+    - /etc/sqoop*
+    - /etc/oozie
+    - /etc/hbase*
+    - /etc/hcatalog
+    - /etc/cloudera-scm-agent
+    - /etc/cloudera-scm-server
+    - /etc/spark
+    - /opt/cloudera
+
+- name: delete cloudera yarn data dir
+  file:
+    path: "{{ item.dir }}/yarn"
+    state: absent
+  loop: "{{ dev }}"
+
+- name: delete cloudera impala data dir
+  file:
+    path: "{{ item.dir }}/impala"
+    state: absent
+  loop: "{{ dev }}"
+
+- name: delete cloudera dfs data dir
+  file:
+    path: "{{ item.dir }}/dfs"
+    state: absent
+  loop: "{{ dev }}"
+
+- name: list the files of dir some_directory
+  shell: ls
+  args:
+    chdir: /var/tmp
+  register: files_list
+ 
+- name: Remove a directory if it does not exist
+  file:
+    path: /var/tmp/{{ item }}
+    state: absent
+  with_items:
+    - "{{ files_list.stdout_lines }}"

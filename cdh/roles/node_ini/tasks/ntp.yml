@@ -1,0 +1,26 @@
+---
+- name: yum install the ntp
+  yum:
+    name: ntp
+    state: latest
+
+- name: start the ntp service
+  service:
+    name: ntpd
+    state: stopped
+    
+
+- name: update the time
+  shell: "ntpdate {{ ntp_server }}"
+
+- name: set the ntp conf
+  template:
+    src: ntp.conf
+    dest: /etc/ntp.conf
+    force: yes
+
+- name: start the ntp service
+  service:
+    name: ntpd
+    state: started
+    

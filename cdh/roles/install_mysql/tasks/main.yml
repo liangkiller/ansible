@@ -1,0 +1,156 @@
+---
+- name: create the group
+  group:
+    name: "{{ group }}"
+    state: present
+
+- name: create the user
+  user:
+    name: "{{ user }}"
+    group: "{{ group }}"
+    shell: /sbin/nologin
+    create_home: no
+
+- name: crate mysql dir
+  tags:
+    - mkdir
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  loop:
+    - "{{ dir_user }}"
+    - "{{ data_dir }}"
+    - "{{ innodb_temp_data_file_path }}"
+    - "{{ innodb_log_group_home_dir }}"
+    - "{{ bin_log_dir }}"
+    - "{{ relay_log_dir }}"
+    - "{{ slow_log_dir }}"
+
+- name: install the dependent rpms
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ rpms }}"
+
+- name: remove the mysql-libs
+  tags:
+    - remove
+  shell: >
+    rpm -e --nodeps mysql-libs
+  args:
+    warn: no
+  ignore_errors: yes
+
+- name: download the mysql rpms
+  tags:
+    - install
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ download_dir }}/{{ item.name }}.rpm"
+    timeout: 300
+  loop: "{{ mysql_rpm_urls }}"
+
+- name: install the mysql rpms
+  tags:
+    - install
+  yum:
+    name: "{{ download_dir }}/{{item.name}}.rpm"
+    state: present
+  loop: "{{ mysql_rpm_urls }}"
+
+- name: delete the default mysql file
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop: [/root/.mysql_secret,/var/lib/mysql,/root/.mysql_history,/etc/my.cnf.rpmnew,/var/log/mysqld.log]
+
+- name: Collect memory facts 
+  tags:
+    - mycnf
+  setup:
+    gather_subset:
+      - hardware
+      - network
+
+- name: set the my.cnf
+  tags:
+    - mycnf
+  template:
+    src: my.cnf.j2
+    dest: "{{ cnf_file }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    force: yes
+
+- name: start mysql service
+  service:
+    name: "{{ mysql_service_name }}"
+    state: started
+
+- name: install the MySQL-python depencies
+  tags:
+    - pymysql
+  yum:
+    name: python-devel
+  when: ansible_python.version.major == 2
+
+- name: install the MySQL-python; pip installed cannot identify
+  tags:
+    - pymysql
+  yum:
+    name: MySQL-python
+  when: ansible_python.version.major == 2
+
+- name: install the PyMySQL
+  tags:
+    - pymysql
+  pip:
+    name: PyMySQL
+  when: ansible_python.version.major == 3
+
+- name: get root temporary password
+  tags:
+    - password
+  shell: >
+    sed '/A temporary password/!d;s/.*: //'  {{ error_log_path }}
+  args:
+    warn: no
+  register: sed_result
+
+- name: set root password
+  tags:
+    - password
+  shell: >
+    mysql -uroot -P{{ mysql_port }} -p'{{ sed_result.stdout }}' --connect-expired-password  -e 'SET PASSWORD = PASSWORD("{{ root_pass }}");'
+  when: sed_result.rc == 0
+
+#- name: close the password policy
+#  tags:
+#    - conf
+#  mysql_variables:
+#    config_file: "{{ cnf_file }}"
+#    login_unix_socket: "{{ socket }}"
+#    login_port: "{{ mysql_port }}"
+#    login_password: "{{ root_pass }}"
+#    login_user: root
+#    variable: "{{ item }}"
+#    value: 0
+#  loop: "{{ password_policy }}"
+#  when: close_password_policy
+
+- name: close the password policy
+  tags:
+    - conf
+  ini_file:
+    path: "{{ cnf_file }}"
+    section: mysqld
+    option: validate_password
+    value: 0
+  when: close_password_policy
+
+- name: restart mysql
+  service:
+    name: "{{ mysql_service_name }}"
+    state: restarted

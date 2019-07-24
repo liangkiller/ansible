@@ -1,0 +1,9 @@
+---
+- name: install the mysql
+  hosts: mysql_master
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - mysql_cdhuser
+  roles:
+    - mysql_cdhuser

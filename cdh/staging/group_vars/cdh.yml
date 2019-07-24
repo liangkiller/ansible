@@ -1,0 +1,21 @@
+---
+download_url: "http://222.187.240.238/soft/cdh/el{{ ansible_distribution_major_version }}"
+cdh_master:
+  - name: cloudera-manager-daemons
+    url: "{{ download_url }}/cloudera-manager-daemons-5.15.0-1.cm5150.p0.62.el6.x86_64.rpm"
+  - name: cloudera-manager-agent
+    url: "{{ download_url }}/cloudera-manager-agent-5.15.0-1.cm5150.p0.62.el6.x86_64.rpm"
+  - name: cloudera-manager-server
+    url: "{{ download_url }}/cloudera-manager-server-5.15.0-1.cm5150.p0.62.el6.x86_64.rpm"
+  - name: enterprise-debuginfo
+    url: "{{ download_url }}/enterprise-debuginfo-5.15.0-1.cm5150.p0.62.el6.x86_64.rpm"
+
+cdh_agent:
+  - name: cloudera-manager-daemons
+    url: "{{ download_url }}/cloudera-manager-daemons-5.15.0-1.cm5150.p0.62.el6.x86_64.rpm"
+  - name: cloudera-manager-agent
+    url: "{{ download_url }}/cloudera-manager-agent-5.15.0-1.cm5150.p0.62.el6.x86_64.rpm"
+
+parcel_url: "{{ download_url }}/CDH-5.15.0-1.cdh5.15.0.p0.21-el6.parcel"
+parcel_sha_url: "{{ download_url }}/CDH-5.15.0-1.cdh5.15.0.p0.21-el6.parcel.sha1"
+parcel_sha_name: "CDH-5.15.0-1.cdh5.15.0.p0.21-el6.parcel.sha"

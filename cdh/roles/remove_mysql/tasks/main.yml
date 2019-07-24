@@ -1,0 +1,26 @@
+---
+- name: stop the mysql
+  service:
+    name: "{{ mysql_service_name }}"
+    state: stopped
+
+- name: delete mysql
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ dir_user }}"
+    - "{{ data_dir }}"
+    - "{{ innodb_temp_data_file_path }}"
+    - "{{ innodb_log_group_home_dir }}"
+    - "{{ bin_log_dir }}"
+    - "{{ relay_log_dir }}"
+    - "{{ slow_log_dir }}"
+    - /etc/my.cnf
+
+- name: remove mysql package
+  yum:
+    name: "mysql-community-{{ item }}"
+    state: absent
+  loop: [server,client,devel,libs-compat,libs,common]
+
