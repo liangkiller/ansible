@@ -1,0 +1,15 @@
+systemLog:
+  destination: file
+  logAppend: true
+  logRotate: reopen
+  path: {{ mongos.logPath }}
+processManagement:
+  fork: true
+  pidFilePath: {{ mongos.pidFilePath }}
+  timeZoneInfo: /usr/share/zoneinfo
+net:
+  port: {{ mongos.port }}
+  bindIp: localhost
+  bindIpAll: true
+sharding:
+  configDB: {{ configDB }}

@@ -1,0 +1,9 @@
+#!/bin/bash
+# ini the shard
+{% for shardItem in shardinfo -%}
+    {% set shardmem = [] %}
+    {% for host in groups['shardsvr'] -%}
+        {{ shardmem.append( {"_id":loop.index0,"host": host ~ ":" ~ shardItem.port} ) }}
+    {% endfor -%}
+mongo --host localhost --port {{ shardItem.port }} --eval 'rs.initiate({"_id" : "{{ shardItem.replSetName }}","members" : {{ shardmem|to_json }}})' >>/tmp/shardsvr.log 2>&1
+{%- endfor %}

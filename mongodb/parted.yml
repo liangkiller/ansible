@@ -1,0 +1,9 @@
+---
+- name: parted disk
+  hosts: all
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - parted
+  roles:
+    - parted

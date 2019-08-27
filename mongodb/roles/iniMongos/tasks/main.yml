@@ -1,0 +1,15 @@
+---
+- name:  template the mongos initialize scripts
+  tags:
+    - mongos_ini
+    - mongos_script
+  delegate_to: localhost
+  template:
+    src: mongos_ini.yml.j2 
+    dest: "{{ role_path }}/files/mongos_ini.sh"
+    force: yes
+
+- name: run the the mongos initialize sh
+  tags:
+    - mongos_ini
+  script: files/mongos_ini.sh

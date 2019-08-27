@@ -1,0 +1,42 @@
+---
+- name: install tsinghua epel repo
+  yum_repository:
+    name: epel
+    description: 'Extra Packages for Enterprise Linux $releasever - $basearch'
+    file: epel
+    baseurl: 'https://mirrors.tuna.tsinghua.edu.cn/epel/$releasever/$basearch'
+    gpgcheck: yes
+    enabled: yes
+    failovermethod: priority
+    gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-$releasever'
+
+- name: install tsinghua epel-debuginfo repo
+  yum_repository:
+    name: epel-debuginfo
+    description: 'Extra Packages for Enterprise Linux $releasever - $basearch - Debug'
+    file: epel
+    baseurl: 'https://mirrors.tuna.tsinghua.edu.cn/epel/$releasever/$basearch/debug'
+    gpgcheck: yes
+    enabled: no
+    failovermethod: priority
+    gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-$releasever'
+
+- name: install tsinghua epel-source repo
+  yum_repository:
+    name: epel-source
+    description: 'Extra Packages for Enterprise Linux $releasever - $basearch - Source'
+    file: epel
+    baseurl: 'https://mirrors.tuna.tsinghua.edu.cn/epel/$releasever/SRPMS'
+    gpgcheck: yes
+    enabled: no
+    failovermethod: priority
+    gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-$releasever'
+
+- name: config tsinghua mongodb mirror
+  yum_repository:
+    name: mongodb-org
+    description: 'Mongodb china YUM repo'
+    file: mongodb
+    baseurl: 'https://mirrors.tuna.tsinghua.edu.cn/mongodb/yum/el$releasever-4.0/'
+    gpgcheck: no
+    enabled: yes

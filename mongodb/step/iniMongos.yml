@@ -1,0 +1,9 @@
+---
+- name:  the mongodb initializtion
+  hosts: master
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - iniMongos
+  roles:
+    - iniMongos

@@ -1,0 +1,29 @@
+[Unit]
+Description=MongoDB Mongos Server
+After=network.target
+Documentation=https://docs.mongodb.org/manual
+[Service]
+User=mongod
+Group=mongod
+Environment="OPTIONS=-f {{ mongos.confPath }}"
+EnvironmentFile=-/etc/sysconfig/mongod
+ExecStart=/usr/bin/mongos $OPTIONS
+ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
+ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
+ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
+PermissionsStartOnly=true
+PIDFile={{ mongos.pidFilePath }}
+Type=forking
+LimitFSIZE=infinity
+LimitCPU=infinity
+LimitAS=infinity
+LimitNOFILE=64000
+LimitNPROC=64000
+LimitMEMLOCK=infinity
+TasksMax=infinity
+TasksAccounting=false
+Restart=always
+RestartSec=5
+RestartPreventExitStatus=SIGKILL
+[Install]
+WantedBy=multi-user.target

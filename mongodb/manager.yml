@@ -1,0 +1,72 @@
+---
+- hosts : mongos
+  tags:
+    - stop_mongos
+    - stop
+  gather_facts: no
+  tasks :
+    - name: stopped the mongos service
+      service:
+        name: "{{ mongos.name }}"
+        state: stopped
+  
+- hosts : configsvr
+  tags:
+    - stop_configsvr
+    - stop
+  gather_facts: no
+  tasks :
+    - name: stopped the config service
+      service:
+        name: "{{ configsvr.name }}"
+        state: stopped
+
+- hosts : shardsvr
+  tags:
+    - stop_shardsvr
+    - stop
+  gather_facts: no
+  tasks :
+    - name: stopped the shard service
+      service:
+        name: "{{ item.name }}"
+        state: stopped
+      loop: "{{ shardinfo }}"
+
+- hosts : configsvr
+  tags:
+    - start_configsvr
+    - start
+  gather_facts: no
+  tasks :
+    - name: start the config service
+      service:
+        name: "{{ configsvr.name }}"
+        state: started
+        enabled: yes
+
+- hosts : shardsvr
+  tags:
+    - start_shardsvr
+    - start
+  gather_facts: no
+  tasks :
+    - name: start the shard service
+      service:
+        name: "{{ item.name }}"
+        state: started
+        enabled: yes
+      loop: "{{ shardinfo }}"
+
+- hosts : mongos
+  tags:
+    - start_mongos
+    - start
+  gather_facts: no
+  tasks :
+    - name: start the mongos service
+      service:
+        name: "{{ mongos.name }}"
+        state: started
+        enabled: yes
+

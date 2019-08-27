@@ -1,0 +1,9 @@
+---
+- name: add the root user and enable user auth
+  hosts: all
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - createUser
+  roles:
+    - createUser

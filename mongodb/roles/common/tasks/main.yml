@@ -1,0 +1,48 @@
+---
+- name: include the base tasks
+  tags: always
+  include_tasks:
+    file: base.yml
+    apply:
+      tags:
+        - base
+
+- name: include the epel tasks
+  tags: always
+  include_tasks:
+    file: epel.yml
+    apply:
+      tags:
+        - epel
+
+- name: include the rpms tasks
+  tags: always
+  include_tasks:
+    file: rpms.yml
+    apply:
+      tags:
+        - rpms
+
+- name: include the pip tasks
+  tags: always
+  include_tasks:
+    file: pip.yml
+    apply:
+      tags:
+        - pip
+
+- name: include the mongo tasks
+  tags: always
+  include_tasks:
+    file: mongo.yml
+    apply:
+      tags:
+        - mongo
+
+- name: optimize the system
+  tags: always
+  include_tasks:
+    file: optimize_system.yml
+    apply:
+      tags:
+        - optimization

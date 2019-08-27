@@ -1,0 +1,113 @@
+---
+shardsvr:
+  clusterRole: shardsvr
+shardinfo:
+  - name: shardsvr17090
+    port: 17090
+    confPath: "{{ configDir}}/shardsvr17090.yml"
+    logPath: "{{ logDir }}/shardsvr17090.log"
+    dbPath: /cache10/mongodb/shardsvr17090
+    pidFilePath: "{{ pidDir }}/shardsvr17090.pid"
+    replSetName: shard17090
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17090.service"
+
+  - name: shardsvr17091
+    port: 17091
+    confPath: "{{ configDir}}/shardsvr17091.yml"
+    logPath: "{{ logDir }}/shardsvr17091.log"
+    dbPath: /cache1/mongodb/shardsvr17091
+    pidFilePath: "{{ pidDir }}/shardsvr17091.pid"
+    replSetName: shard17091
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17091.service"
+
+  - name: shardsvr17092
+    port: 17092
+    confPath: "{{ configDir}}/shardsvr17092.yml"
+    logPath: "{{ logDir }}/shardsvr17092.log"
+    dbPath: /cache2/mongodb/shardsvr17092
+    pidFilePath: "{{ pidDir }}/shardsvr17092.pid"
+    replSetName: shard17092
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17092.service"
+
+  - name: shardsvr17093
+    port: 17093
+    confPath: "{{ configDir}}/shardsvr17093.yml"
+    logPath: "{{ logDir }}/shardsvr17093.log"
+    dbPath: /cache3/mongodb/shardsvr17093
+    pidFilePath: "{{ pidDir }}/shardsvr17093.pid"
+    replSetName: shard17093
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17093.service"
+
+  - name: shardsvr17094
+    port: 17094
+    confPath: "{{ configDir}}/shardsvr17094.yml"
+    logPath: "{{ logDir }}/shardsvr17094.log"
+    dbPath: /cache4/mongodb/shardsvr17094
+    pidFilePath: "{{ pidDir }}/shardsvr17094.pid"
+    replSetName: shard17094
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17094.service"
+
+  - name: shardsvr17095
+    port: 17095
+    confPath: "{{ configDir}}/shardsvr17095.yml"
+    logPath: "{{ logDir }}/shardsvr17095.log"
+    dbPath: /cache5/mongodb/shardsvr17095
+    pidFilePath: "{{ pidDir }}/shardsvr17095.pid"
+    replSetName: shard17095
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17095.service"
+
+  - name: shardsvr17096
+    port: 17096
+    confPath: "{{ configDir}}/shardsvr17096.yml"
+    logPath: "{{ logDir }}/shardsvr17096.log"
+    dbPath: /cache6/mongodb/shardsvr17096
+    pidFilePath: "{{ pidDir }}/shardsvr17096.pid"
+    replSetName: shard17096
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17096s.service"
+
+  - name: shardsvr17097
+    port: 17097
+    confPath: "{{ configDir}}/shardsvr17097.yml"
+    logPath: "{{ logDir }}/shardsvr17097.log"
+    dbPath: /cache7/mongodb/shardsvr17097
+    pidFilePath: "{{ pidDir }}/shardsvr17097.pid"
+    replSetName: shard17097
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17097.service"
+    
+  - name: shardsvr17098
+    port: 17098
+    confPath: "{{ configDir}}/shardsvr17098.yml"
+    logPath: "{{ logDir }}/shardsvr17098.log"
+    dbPath: /cache8/mongodb/shardsvr17098
+    pidFilePath: "{{ pidDir }}/shardsvr17098.pid"
+    replSetName: shard17098
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17098.service"
+
+  - name: shardsvr17099
+    port: 17099
+    confPath: "{{ configDir}}/shardsvr17099.yml"
+    logPath: "{{ logDir }}/shardsvr17099.log"
+    dbPath: /cache9/mongodb/shardsvr17099
+    pidFilePath: "{{ pidDir }}/shardsvr17099.pid"
+    replSetName: shard17099
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17099.service"
+
+  - name: shardsvr17111
+    port: 17111
+    confPath: "{{ configDir}}/shardsvr17111.yml"
+    logPath: "{{ logDir }}/shardsvr17111.log"
+    dbPath: /cache11/mongodb/shardsvr17111
+    pidFilePath: "{{ pidDir }}/shardsvr17111.pid"
+    replSetName: shard17111
+    cacheSizeGB: 8
+    servicePath: "{{ serviceDir }}/shardsvr17111.service"

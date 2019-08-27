@@ -1,0 +1,9 @@
+---
+- name: formate the filesystem
+  hosts: all
+  gather_facts: yes
+  any_errors_fatal: true
+  tags:
+    - mkfs
+  roles:
+    - mkfs

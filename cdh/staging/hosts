@@ -4,34 +4,34 @@ all:
       children:
         cdh_master:
           hosts:
-            127.0.0.125:
+            121.226.244.125:
               role: master
         cdh_agent:
           hosts:
-            127.0.0.126:
+            121.226.244.126:
               role: agent
-            127.0.0.127:
+            121.226.244.127:
               role: agent
     mysql:
       children:
         mysql_master:
           hosts:
-            127.0.0.126:
+            121.226.244.126:
               reps: master
         mysql_agent:
           hosts:
-            127.0.0.127:
+            121.226.244.127:
               reps: slave
     ntp:
       children:
         ntp_master:
           hosts:
-            127.0.0.125:
+            121.226.244.125:
               role: master
         cdh_agent:
           hosts:
-            127.0.0.126:
-            127.0.0.127:
+            121.226.244.126:
+            121.226.244.127:
         
      
               

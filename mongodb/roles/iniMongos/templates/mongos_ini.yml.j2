@@ -1,0 +1,11 @@
+#!/bin/bash
+# add the shard
+{% for shardItem in shardinfo -%}
+    {% set shard = [] %}
+    {% for host in groups['shardsvr'] -%}
+        {{ shard.append( host ~ ":" ~ shardItem.port ) }}
+    {% endfor -%}
+{% set shardstr =  shardItem.replSetName ~ "/" ~ shard|join(",") %}
+mongo --host localhost --port {{ mongos.port }} --eval "sh.addShard('{{ shardstr }}')" >>/tmp/mongos.log 2>&1
+{%- endfor %}
+

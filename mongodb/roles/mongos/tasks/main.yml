@@ -1,0 +1,24 @@
+---
+- name: template the default vars
+  delegate_to: localhost
+  template:
+    src: vars.yml.j2 
+    dest: "{{ role_path }}/defaults/main.yml"
+    force: yes
+
+- include_vars:
+    file: "{{ role_path }}/defaults/main.yml"
+
+- name: copy the conf
+  template:
+    src: mongos.yml.j2
+    dest: "{{ mongos.confPath }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    force: yes
+
+- name: copy the service
+  template:
+    src: mongos.service
+    dest: "{{ mongos.servicePath }}"
+    force: yes

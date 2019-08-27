@@ -1,0 +1,47 @@
+---
+- name: yum  Development tools
+  yum: 
+    name: "@Development tools" 
+    state: present
+
+- name: other tools
+  yum:
+    name: "{{ othertools }}"
+    state: latest
+
+- name: set the entropy
+  tags:
+    - haveged
+  yum:
+    name: haveged 
+    state: present
+
+- name: set the haveged conf
+  tags:
+    - haveged
+  lineinfile:
+    path: /etc/default/haveged 
+    line: DAEMON_ARGS="-w 1024"
+    create: yes
+
+- name: start the haveged
+  tags:
+    - haveged
+  service:
+    name: haveged 
+    state: started 
+    enabled: yes
+
+- name: stop the rng-tools
+  tags:
+    - haveged
+  service:
+    name: rngd
+    state: stopped 
+
+- name: remove the rng-tools
+  tags:
+    - haveged
+  yum:
+    name: rng-tools
+    state: absent

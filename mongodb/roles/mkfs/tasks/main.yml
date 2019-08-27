@@ -1,0 +1,17 @@
+---
+- name: Create a xfs filesystem
+  filesystem:
+    fstype: "{{ item.fstype }}"
+    dev: "{{ item.name }}"
+    opts: "{{ item.opts }}"
+    force: yes
+  loop: "{{ dev }}"
+
+- name: mount filesystem
+  mount:
+    path: "{{ item.dir }}"
+    src: "{{ item.label }}"
+    fstype: "{{ item.fstype }}"
+    opts: defaults,noatime,nodiratime
+    state: mounted
+  loop: "{{ dev }}"

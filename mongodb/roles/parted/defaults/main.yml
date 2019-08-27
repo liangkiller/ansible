@@ -1,0 +1,20 @@
+---
+# Variables here are applicable to all host groups
+
+device: /dev/vdb
+
+partitions:
+  - num: 1
+    part_type: primary
+    part_start: 0%
+    part_end: 700GiB
+
+  - num: 2
+    part_type: primary
+    part_start: 700GiB
+    part_end: 1400GiB
+
+  - num: 3
+    part_type: primary
+    part_start: 1400GiB
+    part_end: 100%

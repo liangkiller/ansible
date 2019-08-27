@@ -1,0 +1,59 @@
+# {{ ansible_managed }}
+# Manual customization of this file is not recommended.
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+# default
+-A INPUT -i lo -j ACCEPT
+
+### ruan3
+-A INPUT -s 59.61.78.224/28 -p tcp -m tcp -m multiport --dports {{ mongos.port }}{% if web_port %},{{ web_port }}{% endif %} -j ACCEPT
+-A INPUT -s 59.61.78.128/28 -p tcp -m tcp -m multiport --dports {{ mongos.port }}{% if web_port %},{{ web_port }}{% endif %} -j ACCEPT
+-A INPUT -s 218.85.123.224/27 -p tcp -m tcp -m multiport --dports {{ mongos.port }}{% if web_port %},{{ web_port }}{% endif %} -j ACCEPT
+-A INPUT -s 218.107.205.208/28 -p tcp -m tcp -m multiport --dports {{ mongos.port }}{% if web_port %},{{ web_port }}{% endif %} -j ACCEPT
+-A INPUT -s 183.253.10.64/27 -p tcp -m tcp -m multiport --dports {{ mongos.port }}{% if web_port %},{{ web_port }}{% endif %} -j ACCEPT
+-A INPUT -s 36.251.248.160/27 -p tcp -m tcp -m multiport --dports {{ mongos.port }}{% if web_port %},{{ web_port }}{% endif %} -j ACCEPT
+
+# configsvr
+{% for host in groups['configsvr'] -%}
+-A INPUT -p tcp -s {{ host }} --dport {{ configsvr.port }} -j ACCEPT
+{% endfor %}
+# mongos
+{% for host in groups['mongos'] -%}
+-A INPUT -p tcp -s {{ host }} --dport {{ mongos.port }} -j ACCEPT
+{% endfor %}
+# shardsvr
+{% for shardItem in shardinfo -%}
+{%- for host in groups['shardsvr'] %}
+-A INPUT -p tcp -s {{ host }} --dport {{ shardItem.port }} -j ACCEPT
+{% endfor %}
+{%- endfor %}
+
+#monitor
+-A INPUT -p tcp -s {{ monitor }} --dport {{ configsvr.port }} -j ACCEPT
+-A INPUT -p tcp -s {{ monitor }} --dport {{ mongos.port }} -j ACCEPT
+{% for shardItem in shardinfo -%}
+-A INPUT -p tcp -s {{ monitor }} --dport {{ shardItem.port }} -j ACCEPT
+{% endfor %}
+
+{% for ip in other_ip %}
+-A INPUT -p tcp -s {{ ip }} --dport {{ mongos.port }} -j ACCEPT
+{% endfor %}
+
+# Drop all except allow
+# configsvr
+-A INPUT -p tcp  --dport {{ configsvr.port }} -j DROP
+# mongos
+-A INPUT -p tcp  --dport {{ mongos.port }} -j DROP
+# shardsvr
+{% for shardItem in shardinfo -%}
+-A INPUT -p tcp  --dport {{ shardItem.port }} -j DROP
+{% endfor %}
+#mongo web
+{% if web_port -%}
+-A INPUT -p tcp  --dport {{ web_port }} -j DROP
+{% endif %}
+
+COMMIT

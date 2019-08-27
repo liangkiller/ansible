@@ -1,0 +1,9 @@
+---
+- name: install mongodb package and crate common dir
+  hosts: all
+  gather_facts: yes
+  any_errors_fatal: true
+  tags:
+    - common
+  roles:
+    - common

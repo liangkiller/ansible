@@ -1,0 +1,8 @@
+#!/bin/bash
+# ini the configsvr
+{% set configmem = [] %}
+{% for host in groups['configsvr'] -%}
+    {{ configmem.append( {"_id":loop.index0,"host": host ~ ":" ~ configsvr.port} ) }}
+{%- endfor %}
+
+mongo --host localhost --port {{ configsvr.port }} --eval 'rs.initiate({"_id" : "{{ configsvr.replSetName }}","members" : {{ configmem|to_json }}})' >>/tmp/configsvr.log 2>&1

@@ -1,0 +1,30 @@
+systemLog:
+  destination: file
+  logAppend: true
+  logRotate: reopen
+  path: {{ configsvr.logPath }}
+storage:
+  dbPath: {{ configsvr.dbPath }}
+  directoryPerDB: true
+  journal:
+    enabled: true
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: {{ configsvr.cacheSizeGB }}
+      directoryForIndexes: true
+    collectionConfig:
+      blockCompressor: {{ compressor }}
+processManagement:
+  fork: true
+  pidFilePath: {{ configsvr.pidFilePath }}
+  timeZoneInfo: /usr/share/zoneinfo
+net:
+  port: {{ configsvr.port }}
+  bindIp: localhost
+  bindIpAll: true
+  compression:
+    compressors: {{ compressor }}
+sharding:
+  clusterRole: {{ configsvr.clusterRole }}
+replication:
+  replSetName: {{ configsvr.replSetName }}

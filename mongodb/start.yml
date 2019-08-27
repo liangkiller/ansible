@@ -1,0 +1,36 @@
+---
+- hosts : configsvr
+  tags:
+    - configsvr
+  gather_facts: no
+  tasks :
+    - name: start the config service
+      service:
+        name: "{{ configsvr.name }}"
+        state: started
+        enabled: yes
+
+- hosts : shardsvr
+  tags:
+    - shardsvr
+  gather_facts: no
+  vars:
+    shardItem: "{{ item }}"
+  tasks :
+    - name: start the shard service
+      service:
+        name: "{{ item.name }}"
+        state: started
+        enabled: yes
+      loop: "{{ shardinfo }}"
+
+- hosts : mongos
+  tags:
+    - mongos
+  gather_facts: no
+  tasks :
+    - name: start the mongos service
+      service:
+        name: "{{ mongos.name }}"
+        state: started
+        enabled: yes

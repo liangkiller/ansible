@@ -6,9 +6,9 @@
   tags:
     - install_cdh
   tasks:
-    - name: oozie tomcat
+    - name: tomcat log
       blockinfile:
-        path: /var/lib/oozie/tomcat-deployment/conf/server.xml
+        path: "{{ item }}"
         marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->" 
         block: |
             <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" 
@@ -16,6 +16,9 @@
         insertbefore: '</Host>'
         backup: yes
       ignore_errors: yes
+      loop:
+        - /var/lib/oozie/tomcat-deployment/conf/server.xml
+        - /var/lib/hadoop-httpfs/tomcat-deployment/conf/server.xml
      
     - name: httpd ServerSignature
       replace:
@@ -61,4 +64,10 @@
         src: /usr/share/cmf/common_jars/commons-fileupload-1.4.jar
         dest: /usr/share/cmf/lib/commons-fileupload-1.4.jar
         state: link
+      ignore_errors: yes
+
+    - name: commons-fileupload
+      copy:
+        src: commons-fileupload-1.4.jar
+        dest: /var/lib/solr/tomcat-deployment/webapps/solr/WEB-INF/lib
       ignore_errors: yes

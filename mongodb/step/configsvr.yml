@@ -1,0 +1,9 @@
+---
+- name: install the configsvr
+  hosts: configsvr
+  gather_facts: no
+  any_errors_fatal: true
+  tags:
+    - configsvr
+  roles:
+    - configsvr

@@ -1,0 +1,38 @@
+---
+- name: install the tuned
+  yum:
+    name: tuned
+    state: latest
+
+- name: start the tuned and add to chkconfig
+  service:
+    name: tuned
+    state: started
+    enabled: yes
+
+- name: create the directory
+  file:
+    path: /etc/tuned/percona-mongodb
+    state: directory
+
+- name: copy percona-mongodb.sh
+  copy:
+    src: percona-mongodb.sh
+    dest: /etc/tuned/percona-mongodb/percona-mongodb.sh
+    mode: 0755
+
+- name: copy tuned.conf
+  template:
+    src: tuned.conf
+    dest: /etc/tuned/percona-mongodb/tuned.conf
+    mode: 0644
+
+- name: active the optimize
+  shell: tuned-adm profile percona-mongodb
+
+- name: set ulimit
+  tags:
+    - ulimit
+  copy:
+    src: 90-mongodb.conf
+    dest: /etc/security/limits.d/90-mongodb.conf  
